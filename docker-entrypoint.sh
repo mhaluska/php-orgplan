@@ -1,10 +1,11 @@
 #!/bin/bash
+set -e
 
 if [ -z ${USER_UID+x} ]; then
-        echo "Variable USER_UID is not set, skipping."
+        echo >&2 "Variable USER_UID is not set, skipping."
    else
         if [ $(id -u www-data) -ne 33 ]; then
-                echo "UID and GID for www-data already modified, skipping."
+                echo >&2 "UID and GID for www-data already modified, skipping."
            else
                 : ${USER_GID:=${USER_UID}}
                 usermod -u $USER_UID www-data
@@ -12,7 +13,7 @@ if [ -z ${USER_UID+x} ]; then
                 find / -user 33 2>/dev/null | xargs -r chown -h $USER_UID
                 find / -group 33 2>/dev/null | xargs -r chgrp -h $USER_GID
                 usermod -g www-data www-data
-                echo "Ownership forced to new UID: $USER_UID and GID: $USER_GID."
+                echo >&2 "Ownership forced to new UID: $USER_UID and GID: $USER_GID."
         fi
 fi
 
@@ -25,14 +26,9 @@ sed -i -e 's/\(.*\)\(MaxConnectionsPerChild\)\(.*\)/\1\2\t250/g' /etc/apache2/mo
 sed -i -e 's/\(^ServerTokens\)\(.*\)/\1\ Prod/g' /etc/apache2/conf-available/security.conf
 sed -i -e 's/\(^ServerSignature\)\(.*\)/\1\ Off/g' /etc/apache2/conf-available/security.conf
 
-# source envvars
-if [ -f /etc/apache2/envvars ]; then
-	source /etc/apache2/envvars
-fi
-
 if [ ! -f /etc/apache2/sites-enabled/000-default.conf ]; then
 
-tee /etc/apache2/sites-enabled/000-default.conf <<EOF
+tee /etc/apache2/sites-enabled/000-default.conf <<'EOF'
 <VirtualHost *:80>
         # The ServerName directive sets the request scheme, hostname and port that
         # the server uses to identify itself. This is used when creating
