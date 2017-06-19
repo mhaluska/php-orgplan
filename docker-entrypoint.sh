@@ -1,11 +1,10 @@
 #!/bin/bash
-set -e
 
 if [ -z ${USER_UID+x} ]; then
-        echo >&2 "Variable USER_UID is not set, skipping."
+        echo "Variable USER_UID is not set, skipping."
    else
         if [ $(id -u www-data) -ne 33 ]; then
-                echo >&2 "UID and GID for www-data already modified, skipping."
+                echo "UID and GID for www-data already modified, skipping."
            else
                 : ${USER_GID:=${USER_UID}}
                 usermod -u $USER_UID www-data
@@ -13,7 +12,7 @@ if [ -z ${USER_UID+x} ]; then
                 find / -user 33 2>/dev/null | xargs -r chown -h $USER_UID
                 find / -group 33 2>/dev/null | xargs -r chgrp -h $USER_GID
                 usermod -g www-data www-data
-                echo >&2 "Ownership forced to new UID: $USER_UID and GID: $USER_GID."
+                echo "Ownership forced to new UID: $USER_UID and GID: $USER_GID."
         fi
 fi
 
