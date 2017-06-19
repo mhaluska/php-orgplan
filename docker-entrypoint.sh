@@ -48,8 +48,13 @@ tee /etc/apache2/sites-enabled/000-default.conf <<'EOF'
         # modules, e.g.
         #LogLevel info ssl:warn
 
+        LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+        LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+        SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" forwarded
+
         ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
+        CustomLog ${APACHE_LOG_DIR}/access.log combined env=!forwarded
+        CustomLog ${APACHE_LOG_DIR}/access.log proxy env=forwarded
 
         # For most configuration files from conf-available/, which are
         # enabled or disabled at a global level, it is possible to
