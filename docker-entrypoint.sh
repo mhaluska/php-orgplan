@@ -26,6 +26,11 @@ sed -i -e 's/\(.*\)\(MaxConnectionsPerChild\)\(.*\)/\1\2\t250/g' /etc/apache2/mo
 sed -i -e 's/\(^ServerTokens\)\(.*\)/\1\ Prod/g' /etc/apache2/conf-available/security.conf
 sed -i -e 's/\(^ServerSignature\)\(.*\)/\1\ Off/g' /etc/apache2/conf-available/security.conf
 
+# source envvars
+if [ -f /etc/apache2/envvars ]; then
+	source /etc/apache2/envvars
+fi
+
 if [ ! -f /etc/apache2/sites-enabled/000-default.conf ]; then
 
 tee /etc/apache2/sites-enabled/000-default.conf <<EOF
