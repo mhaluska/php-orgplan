@@ -1,9 +1,9 @@
 FROM php:7.1-apache
 
 # install the PHP extensions we need
-RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libfreetype6-dev && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libfreetype6-dev libxml2-dev && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr \
-	&& docker-php-ext-install gd mysqli opcache pdo pdo_mysql
+	&& docker-php-ext-install gd mysqli opcache pdo pdo_mysql soap
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
